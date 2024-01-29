@@ -24,15 +24,16 @@ namespace StudentTCData
 
         static string GenerateRandomName()
         {
-            string tenVietNam = new string[] { "An", "Bình", "Cường", "Dung", "Đức", "Lan", "Hằng", "Hải", "Thanh", "Trường",
-                "Mai", "Khánh", "Ngọc", "Phú", "Huệ", "Long", "Hương", "Đạt", "Hạnh", "Tú",
-                "Hiệp", "Minh", "Thúy", "Đức", "Anh", "Dũng", "Hà", "Tâm", "Loan", "Sơn",
-                "Hồng", "Hùng", "Thúy", "Trường", "Lan Anh",    "Thị Nhung",    "Kim Ngân",    "Thị Hạnh",    "Thiên Kim",
-                "Thùy Dương", "Hồng Nhung","Ngọc Trâm", "Ngọc Ánh", "Diễm Hương", "Mai Phương", "Thiên Kim", "Thiên Trang", "Hạnh Phúc", "Tuyết Nhung",
-                "Lan Phương",    "Thùy Trang",    "Thiên Di",    "Thu Hằng",    "Hà My",    "Thùy Linh",    "Hương Trà",    "Hồng Anh",    "Trần Thảo",    "Mai Anh",
-                "Lệ Hằng",    "Thúy An",    "Hạnh Nguyệt",    "Bích Ngọc",    "Trần Thanh",    "Diễm Trinh",    "Mai Trang",    "Tú Uyên",    "Thiên Kim",    "Thiên Thanh",
-                "Ngọc Lan",    "Thiên Di",    "Trúc Ly",    "Kim Oanh",    "Thúy Anh",    "Tú Quyên",    "Phương Mai",    "Kim Loan",    "Hồng Nhung",    "Thị Ngọc",
-                "Hương Giang",    "Hồng Tuyết",    "Mai Hương",    "Thiên Mai" }[random.Next(83)]; ; // 33+50
+            string tenVietNam = new string[] { 
+                "An", "Bình", "Cường", "Dung", "Đức", "Lan", "Hằng", "Hải", "Thanh", "Trường",
+                "Mai", "Khánh", "Ngọc", "Phú", "Huệ", "Long", "Hương", "Đạt", "Hạnh", "Tú", "Tí Kẹo",
+                "Hiệp", "Minh", "Thúy", "Đức", "Anh", "Dũng", "Hà", "Tâm", "Loan", "Sơn", "Chích Bông",
+                "Hồng", "Hùng", "Thúy", "Trường", "Lan Anh", "Thị Nhung", "Kim Ngân", "Thị Hạnh", "Thiên Kim",
+                "Thùy Dương", "Hồng Nhung", "Ngọc Trâm", "Ngọc Ánh", "Diễm Hương", "Mai Phương", "Thiên Kim", "Thiên Trang", "Hạnh Phúc", "Tuyết Nhung",
+                "Lan Phương", "Thùy Trang", "Thiên Di", "Thu Hằng", "Hà My", "Thùy Linh", "Hương Trà", "Hồng Anh", "Trần Thảo", "Mai Anh",
+                "Lệ Hằng", "Thúy An", "Hạnh Nguyệt", "Bích Ngọc", "Trần Thanh", "Diễm Trinh", "Mai Trang", "Tú Uyên", "Thiên Kim", "Thiên Thanh",
+                "Ngọc Lan", "Thiên Di", "Trúc Ly", "Kim Oanh", "Thúy Anh", "Tú Quyên", "Phương Mai", "Kim Loan", "Hồng Nhung", "Thị Ngọc",
+                "Hương Giang", "Hồng Tuyết", "Mai Hương", "Thiên Mai", "Chích Chòe" }[random.Next(86)]; ; // 33+50+3
             return tenVietNam;
             // Bạn có thể thêm các tên khác vào đây nếu cần};
             // int nameLength = random.Next(6, 9);

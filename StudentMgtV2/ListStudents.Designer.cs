@@ -41,6 +41,11 @@
             txtGpa = new TextBox();
             txtSearch = new TextBox();
             groupBox1 = new GroupBox();
+            ckbGpa = new CheckBox();
+            ckbYob = new CheckBox();
+            ckbAddress = new CheckBox();
+            ckbName = new CheckBox();
+            ckbID = new CheckBox();
             button4 = new Button();
             btnAdd = new Button();
             btnUpdate = new Button();
@@ -149,19 +154,75 @@
             // 
             txtSearch.Location = new Point(72, 20);
             txtSearch.Name = "txtSearch";
-            txtSearch.Size = new Size(110, 23);
+            txtSearch.PlaceholderText = "ID,Name,Address,Yob,Gpa";
+            txtSearch.Size = new Size(166, 23);
             txtSearch.TabIndex = 0;
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(ckbGpa);
+            groupBox1.Controls.Add(ckbYob);
+            groupBox1.Controls.Add(ckbAddress);
+            groupBox1.Controls.Add(ckbName);
+            groupBox1.Controls.Add(ckbID);
             groupBox1.Controls.Add(button4);
             groupBox1.Controls.Add(txtSearch);
-            groupBox1.Location = new Point(27, 266);
+            groupBox1.Location = new Point(12, 266);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(192, 50);
+            groupBox1.Size = new Size(297, 83);
             groupBox1.TabIndex = 9;
             groupBox1.TabStop = false;
             groupBox1.Text = "Search";
+            // 
+            // ckbGpa
+            // 
+            ckbGpa.AutoSize = true;
+            ckbGpa.Location = new Point(241, 57);
+            ckbGpa.Name = "ckbGpa";
+            ckbGpa.Size = new Size(47, 19);
+            ckbGpa.TabIndex = 2;
+            ckbGpa.Text = "Gpa";
+            ckbGpa.UseVisualStyleBackColor = true;
+            // 
+            // ckbYob
+            // 
+            ckbYob.AutoSize = true;
+            ckbYob.Location = new Point(189, 57);
+            ckbYob.Name = "ckbYob";
+            ckbYob.Size = new Size(46, 19);
+            ckbYob.TabIndex = 2;
+            ckbYob.Text = "Yob";
+            ckbYob.UseVisualStyleBackColor = true;
+            // 
+            // ckbAddress
+            // 
+            ckbAddress.AutoSize = true;
+            ckbAddress.Location = new Point(115, 57);
+            ckbAddress.Name = "ckbAddress";
+            ckbAddress.Size = new Size(68, 19);
+            ckbAddress.TabIndex = 2;
+            ckbAddress.Text = "Address";
+            ckbAddress.UseVisualStyleBackColor = true;
+            // 
+            // ckbName
+            // 
+            ckbName.AutoSize = true;
+            ckbName.Location = new Point(52, 57);
+            ckbName.Name = "ckbName";
+            ckbName.Size = new Size(57, 19);
+            ckbName.TabIndex = 2;
+            ckbName.Text = "Name";
+            ckbName.UseVisualStyleBackColor = true;
+            // 
+            // ckbID
+            // 
+            ckbID.AutoSize = true;
+            ckbID.Location = new Point(9, 57);
+            ckbID.Name = "ckbID";
+            ckbID.Size = new Size(37, 19);
+            ckbID.TabIndex = 2;
+            ckbID.Text = "ID";
+            ckbID.UseVisualStyleBackColor = true;
             // 
             // button4
             // 
@@ -171,6 +232,7 @@
             button4.TabIndex = 1;
             button4.Text = "Search";
             button4.UseVisualStyleBackColor = true;
+            button4.Click += SearchStudents;
             // 
             // btnAdd
             // 
@@ -206,18 +268,19 @@
             // 
             dgvStudentsList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvStudentsList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvStudentsList.Location = new Point(249, 66);
+            dgvStudentsList.Location = new Point(330, 66);
             dgvStudentsList.Name = "dgvStudentsList";
             dgvStudentsList.RowTemplate.Height = 25;
             dgvStudentsList.Size = new Size(407, 193);
             dgvStudentsList.TabIndex = 8;
+            dgvStudentsList.ColumnHeaderMouseClick += SortByColumnName;
             dgvStudentsList.SelectionChanged += SelectedRows;
             // 
             // dgvSearchResult
             // 
             dgvSearchResult.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvSearchResult.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvSearchResult.Location = new Point(249, 266);
+            dgvSearchResult.Location = new Point(330, 266);
             dgvSearchResult.Name = "dgvSearchResult";
             dgvSearchResult.RowTemplate.Height = 25;
             dgvSearchResult.Size = new Size(407, 65);
@@ -290,5 +353,10 @@
         private DataGridView dgvStudentsList;
         private DataGridView dgvSearchResult;
         private TextBox txtMsg;
+        private CheckBox ckbGpa;
+        private CheckBox ckbYob;
+        private CheckBox ckbAddress;
+        private CheckBox ckbName;
+        private CheckBox ckbID;
     }
 }

@@ -35,13 +35,13 @@ namespace StudentMgtV2
         }
         public bool ValidateIntYob(string s)
         {
-
-            return true;
+            if (int.TryParse(s.Trim(), out int yob)) return true;
+            return false;
         }
         public bool ValidateDoubleGpa(string s)
         {
-
-            return true;
+            if (double.TryParse(s.Trim(), out double gpa)) return true;
+            return false;
         }
     }
 }

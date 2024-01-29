@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Xml.Linq;
 
 namespace Repositories
@@ -141,6 +142,41 @@ namespace Repositories
         public Student? FindAStudentByID(string id)
         {
             return _students.FirstOrDefault(x => x.Id.Equals(id));
+        }
+
+        //public List<Student> FindStudents(string key) =>   _students.Where(x => x.Name.Contains(key) || x.Address.Contains(key)).ToList();
+        //public List<Student> FindStudents(int key) =>   _students.Where(x => x.Yob == key).ToList();
+        //public List<Student> FindStudents(double key) => _students.Where(x => x.Gpa == key).ToList();
+
+        public List<Student> FindStudents(string name = "An", int yob = 2000, double gpa = 8.0)
+        {
+            var query = _students.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(x => x.Name.Contains(name) || x.Address.Contains(name));
+            }
+            if (yob >= 1990 && yob <= 2020)
+            {
+                query = query.Where(x => x.Yob == yob);
+            }
+            if (gpa >= 5.0 && gpa <= 10.0)
+            {
+                query = query.Where(x => x.Gpa == gpa);
+            }
+            return query.ToList();
+        }
+
+
+        public List<Student>? SortingByColName(string colName)
+        {
+            colName = colName.ToUpper();
+            if (colName.Equals("ID")) return _students.OrderBy(x => x.Id).ToList();
+            if (colName.Equals("NAME")) return _students.OrderBy(x => x.Name).ToList();
+            if (colName.Equals("ADDRESS")) return _students.OrderBy(x => x.Address).ToList();
+            if (colName.Equals("YOB")) return _students.OrderBy(x => x.Yob).ToList();
+            if (colName.Equals("GPA")) return _students.OrderBy(x => x.Gpa).ToList();
+            return null;
         }
     }
 }

@@ -26,6 +26,9 @@ namespace StudentMgtV2
             dgvStudentsList.ColumnHeadersDefaultCellStyle.BackColor = Color.Aqua;
             dgvStudentsList.Columns[0].HeaderCell.Style.BackColor = Color.Magenta;
             dgvStudentsList.Columns[1].HeaderCell.Style.BackColor = Color.Yellow;
+
+            // Search optional
+            ckbName.Checked = true;
         }
 
         private bool ValidateInputData()
@@ -35,7 +38,7 @@ namespace StudentMgtV2
             txtName.Text = txtName.Text.Trim();
             if (!userInput.ValidateStringName(txtName.Text))
             {
-                txtMsg.Text = "Failed to add student. Name must not be null or empty and should be less than 20 characters in length.";
+                txtMsg.Text = "Name must not be null or empty and should be less than 20 characters in length.";
                 return false;
             }
             return true;
@@ -60,7 +63,7 @@ namespace StudentMgtV2
                 if (st != null)
                 {
                     RefreshStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
-                    RefreshGrid();
+                    RefreshGrid(_repo.GetAll());
                     //dgvStudentsList.Refresh(); no work
                 }
             }
@@ -82,9 +85,9 @@ namespace StudentMgtV2
             MoveCursorToFormCenter();
         }
 
-        
-        
-        
+
+
+
         private bool runningExclusiveProcess = false;
         private void AddStudent01(object sender, EventArgs e)
         {
@@ -107,7 +110,7 @@ namespace StudentMgtV2
                     if (st != null)
                     {
                         RefreshStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
-                        RefreshGrid();
+                        RefreshGrid(_repo.GetAll());
                         //dgvStudentsList.Refresh(); no work
                     }
                 }
@@ -161,15 +164,20 @@ namespace StudentMgtV2
 
         }
 
-        private void RefreshGrid()
+        private void RefreshGrid(List<Student>? _list)
         {
             dgvStudentsList.DataSource = null;
-            dgvStudentsList.DataSource = _repo.GetAll();
+            dgvStudentsList.DataSource = _list;
         }
 
         private void RefreshStudentInfo(string? id, string? name, string? address, int yob, double gpa)
         {
             txtID.Text = id; txtName.Text = name; txtAddress.Text = address; txtYob.Text = yob.ToString(); txtGpa.Text = gpa.ToString();
+        }
+
+        private void ClearStudentInfo()
+        {
+            txtID.Text = ""; txtName.Text = ""; txtAddress.Text = ""; txtYob.Text = ""; txtGpa.Text = "";
         }
 
         private void SelectedRows(object sender, EventArgs e)
@@ -204,52 +212,58 @@ namespace StudentMgtV2
 
         private void UpdateStudent(object sender, EventArgs e)
         {
-            btnUpdate.Enabled = false;
-            try
-            {
-                if (!ValidateInputData()) return;
+            PreventMultipleClickOnButton();
 
-                if (_repo.Update(txtID.Text, txtName.Text, txtAddress.Text
-                    , int.Parse(txtYob.Text), double.Parse(txtGpa.Text)))
-                {
-                    txtMsg.Text = $"Student ID = {txtID.Text} updated successfully.";
-                    dgvStudentsList.Refresh();  // worked
-                    //RefreshGrid();              // grid auto refresh ??? but not binding
-                }
-                else
-                {
-                    txtMsg.Text = "Failed to update student.";
-                }
-            }
-            catch (Exception ex)
+            if (!ValidateInputData()) return;
+
+            if (_repo.Update(txtID.Text, txtName.Text, txtAddress.Text
+                , int.Parse(txtYob.Text), double.Parse(txtGpa.Text)))
             {
-                txtMsg.Text = ex.Message;
+                txtMsg.Text = $"Student ID = {txtID.Text} updated successfully.";
+                dgvStudentsList.Refresh();  // worked
+                //RefreshGrid();              // grid auto refresh ??? but not binding
             }
-            finally { btnUpdate.Enabled = true; }
+            else
+            {
+                txtMsg.Text = "Failed to update student.";
+            }
         }
 
         private void DeleteStudent(object sender, EventArgs e)
         {
-            btnDelete.Enabled = false;
-            try
-            {
-                if (_repo.Delete(txtID.Text))
-                {
-                    txtMsg.Text = $"Student ID = {txtID.Text} deleted successfully.";
-                    //dgvStudentsList.Refresh();  // worked //
-                    RefreshGrid();
+            PreventMultipleClickOnButton();
 
-                }
-                else
-                {
-                    txtMsg.Text = "Failed to delete student.";
-                }
-            }
-            catch (Exception ex)
+            if (_repo.Delete(txtID.Text))
             {
-                txtMsg.Text = ex.Message;
+                txtMsg.Text = $"Student ID = {txtID.Text} deleted successfully.";
+                //dgvStudentsList.Refresh();  // worked //
+                RefreshGrid(_repo.GetAll());
+                ClearStudentInfo();
             }
-            finally { btnDelete.Enabled = true; }
+            else
+            {
+                txtMsg.Text = "Failed to delete student.";
+            }
+        }
+
+        private void SearchStudents(object sender, EventArgs e)
+        {
+            PreventMultipleClickOnButton();
+            var result = _repo.FindStudents("Chich", 1800, 4.0);
+            dgvSearchResult.DataSource = result;
+        }
+
+        private void SortByColumnName(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // Check if the clicked area is a column header
+            if (e.RowIndex == -1 && e.Button == MouseButtons.Left)
+            {
+                // Get the column name
+                string columnName = dgvStudentsList.Columns[e.ColumnIndex].Name;
+
+                // Now you have the column name, you can perform sorting or any other operations
+                RefreshGrid(_repo.SortingByColName(columnName));
+            }
         }
     }
 }
