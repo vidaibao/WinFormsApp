@@ -11,7 +11,19 @@ namespace StudentMgtV2
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new frmStudentsList());
+
+            // prevent open 2 forms
+            bool isOpen = false;
+            foreach (Form f in Application.OpenForms)
+            {
+                if (f.Text.Equals("List of Students"))
+                {
+                    isOpen = true; 
+                    f.BringToFront();
+                    break;
+                }
+            }
+            if (!isOpen) Application.Run(new frmStudentsList());
         }
     }
 }

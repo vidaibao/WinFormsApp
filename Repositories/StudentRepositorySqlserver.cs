@@ -62,6 +62,15 @@ namespace Repositories
             return _students;
         }
 
+        /// <summary>
+        /// Generate new ID then adding new student.
+        /// If added successful then return the new id.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="address"></param>
+        /// <param name="yob"></param>
+        /// <param name="gpa"></param>
+        /// <returns>string.Empty if failed</returns>
         public string Add(string name, string address, int yob, double gpa)
         {
             string id = ValidateNewStudentId();
@@ -102,9 +111,9 @@ namespace Repositories
             var itemToDelete = _students.FirstOrDefault(x => x.Id.Equals(id));
             if (itemToDelete == null) return false;
             _students.Remove(itemToDelete);
+            //
             var deletedItem = _students.FirstOrDefault(x => x.Id.Equals(id));
-            if (deletedItem == null) return true;
-            else return false;
+            return (deletedItem == null);
         }
 
 
@@ -127,6 +136,11 @@ namespace Repositories
             string prefix = new string[] { "SE", "CS", "AT", "FE", "BE", "ST", "RD", "SW" }[random.Next(8)];
             string suffix = random.Next(1, 999999).ToString("D6");
             return prefix + suffix;
+        }
+
+        public Student? FindAStudentByID(string id)
+        {
+            return _students.FirstOrDefault(x => x.Id.Equals(id));
         }
     }
 }

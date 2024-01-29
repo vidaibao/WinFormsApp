@@ -25,13 +25,12 @@ namespace StudentMgtV2
         /// <returns></returns>
         public bool ValidateStringName(string s)
         {
-            if ( string.IsNullOrEmpty(s) || (s.Length < 6 && s.Length > 20) ) return false;
-            if (s.Length < 6 && s.Length > 20) return false;
+            if ( string.IsNullOrEmpty(s) || s.Length > 20 ) return false;
             return true;
         }
         public bool ValidateStringAddress(string s)
         {
-
+            if (string.IsNullOrEmpty(s) || s.Length > 50) return false;
             return true;
         }
         public bool ValidateIntYob(string s)

@@ -47,7 +47,7 @@
             btnDelete = new Button();
             dgvStudentsList = new DataGridView();
             dgvSearchResult = new DataGridView();
-            lblMsg = new Label();
+            txtMsg = new TextBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvStudentsList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvSearchResult).BeginInit();
@@ -190,6 +190,7 @@
             btnUpdate.TabIndex = 6;
             btnUpdate.Text = "Update";
             btnUpdate.UseVisualStyleBackColor = true;
+            btnUpdate.Click += UpdateStudent;
             // 
             // btnDelete
             // 
@@ -199,6 +200,7 @@
             btnDelete.TabIndex = 7;
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += DeleteStudent;
             // 
             // dgvStudentsList
             // 
@@ -209,6 +211,7 @@
             dgvStudentsList.RowTemplate.Height = 25;
             dgvStudentsList.Size = new Size(407, 193);
             dgvStudentsList.TabIndex = 8;
+            dgvStudentsList.SelectionChanged += SelectedRows;
             // 
             // dgvSearchResult
             // 
@@ -220,21 +223,22 @@
             dgvSearchResult.Size = new Size(407, 65);
             dgvSearchResult.TabIndex = 10;
             // 
-            // lblMsg
+            // txtMsg
             // 
-            lblMsg.AutoSize = true;
-            lblMsg.Location = new Point(41, 423);
-            lblMsg.Name = "lblMsg";
-            lblMsg.Size = new Size(59, 15);
-            lblMsg.TabIndex = 11;
-            lblMsg.Text = "Message: ";
+            txtMsg.BorderStyle = BorderStyle.None;
+            txtMsg.Location = new Point(40, 410);
+            txtMsg.Name = "txtMsg";
+            txtMsg.PlaceholderText = "Status...";
+            txtMsg.ReadOnly = true;
+            txtMsg.Size = new Size(616, 16);
+            txtMsg.TabIndex = 11;
             // 
             // frmStudentsList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(lblMsg);
+            Controls.Add(txtMsg);
             Controls.Add(dgvSearchResult);
             Controls.Add(dgvStudentsList);
             Controls.Add(btnDelete);
@@ -285,6 +289,6 @@
         private Button btnDelete;
         private DataGridView dgvStudentsList;
         private DataGridView dgvSearchResult;
-        private Label lblMsg;
+        private TextBox txtMsg;
     }
 }
