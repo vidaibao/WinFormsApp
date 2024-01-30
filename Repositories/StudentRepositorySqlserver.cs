@@ -9,6 +9,7 @@ namespace Repositories
         private List<Student> _students = new();
         static Random random = new Random();
 
+        
         public StudentRepositorySqlserver()
         {
             // Call connect to Sql server OR initialize data on RAM
@@ -33,6 +34,10 @@ namespace Repositories
                             _students.Add(new Student(parts[0], parts[1], parts[2], int.Parse(parts[3]), double.Parse(parts[4])));
                         }
                     }
+                    sr.Close();
+                    _students.Add(new Student("SS321654", "Chich Choe", "Sai Gon", 2010, 8.8));
+                    _students.Add(new Student("SS654321", "Chich Bong", "Sai Gon", 2014, 8.8));
+                    _students.Add(new Student("SS432165", "Ti Keo", "Sai Gon", 1988, 8.8));
                 }
             }
             catch (Exception ex)
@@ -168,7 +173,7 @@ namespace Repositories
         }
 
 
-        public List<Student>? SortingByColName(string colName)
+        public List<Student> SortingByColName(string colName)
         {
             colName = colName.ToUpper();
             if (colName.Equals("ID")) return _students.OrderBy(x => x.Id).ToList();
@@ -176,7 +181,39 @@ namespace Repositories
             if (colName.Equals("ADDRESS")) return _students.OrderBy(x => x.Address).ToList();
             if (colName.Equals("YOB")) return _students.OrderBy(x => x.Yob).ToList();
             if (colName.Equals("GPA")) return _students.OrderBy(x => x.Gpa).ToList();
-            return null;
+            return _students;
         }
+
+        /* Enumeration for logic operators
+        public enum LogicOperator
+        {
+            AND,
+            OR
+        }
+        */
+
+        // Method to search students based on criteria and logic operator
+        public List<Student> SearchStudents(string? id = null, string? name = null, string? address = null, int? yob = null, double? gpa = null, string logicOperator = "AND")
+        {
+            // Start with all students
+            IEnumerable<Student> query = _students;
+
+            // Apply filters based on provided criteria
+            if (id != null)
+                query = query.Where(s => s.Id.ToLower().Contains(id.ToLower()));
+            if (name != null)
+                query = query.Where(s => s.Name.ToLower().Contains(name.ToLower()));
+            if (address != null)
+                query = query.Where(s => s.Address.ToLower().Contains(address.ToLower()));
+            if (yob != null)
+                query = query.Where(s => s.Yob == yob);
+            if (gpa != null)
+                query = query.Where(s => s.Gpa == gpa);
+
+            // Return the result based on the logic operator
+            return logicOperator == "AND" ? query.ToList() : _students.Intersect(query).ToList();
+        }
+
+
     }
 }

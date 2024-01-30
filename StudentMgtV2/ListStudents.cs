@@ -22,13 +22,33 @@ namespace StudentMgtV2
             dgvStudentsList.DataSource = students;
 
             // Adjust dgv header
+            AdjustDGVHeader();
+
+            // PlaceHolderText
+            InitInputText();
+
+            // Search optional
+            ckbName.Checked = true;
+            rbAND.Checked = true;
+        }
+
+        private void InitInputText()
+        {
+            //txtID.PlaceholderText = "SA123456"; // not work with read-only true
+            txtName.PlaceholderText = "name";
+            txtAddress.PlaceholderText = "address";
+            txtYob.PlaceholderText = "1980";
+            txtGpa.PlaceholderText = "5.0";
+
+            txtSearch.PlaceholderText = "ID,Name,Address,Yob,Gpa;sa123,name,address,1980,5.0";
+        }
+
+        private void AdjustDGVHeader()
+        {
             dgvStudentsList.EnableHeadersVisualStyles = false; //
             dgvStudentsList.ColumnHeadersDefaultCellStyle.BackColor = Color.Aqua;
             dgvStudentsList.Columns[0].HeaderCell.Style.BackColor = Color.Magenta;
             dgvStudentsList.Columns[1].HeaderCell.Style.BackColor = Color.Yellow;
-
-            // Search optional
-            ckbName.Checked = true;
         }
 
         private bool ValidateInputData()
@@ -41,13 +61,34 @@ namespace StudentMgtV2
                 txtMsg.Text = "Name must not be null or empty and should be less than 20 characters in length.";
                 return false;
             }
+            // 
+            txtAddress.Text = txtAddress.Text.Trim();
+            if (!userInput.ValidateStringAddress(txtAddress.Text))
+            {
+                txtMsg.Text = "Name must not be null or empty and should be less than 50 characters in length.";
+                return false;
+            }
+            // 
+            txtYob.Text = txtYob.Text.Trim();
+            if (!userInput.ValidateIntYob(txtYob.Text))
+            {
+                txtMsg.Text = "Year of Birth must be integer and between 1980 to 2020.";
+                return false;
+            }
+            // 
+            txtGpa.Text = txtGpa.Text.Trim();
+            if (!userInput.ValidateDoubleGpa(txtGpa.Text))
+            {
+                txtMsg.Text = "Gpa number must be between 5.0 to 10.0";
+                return false;
+            }
             return true;
         }
 
 
         private void AddStudent(object sender, EventArgs e)
         {
-            PreventMultipleClickOnButton();
+            PreventMultipleClickOnButton(btnAdd.Location);
 
             if (!ValidateInputData()) return;
 
@@ -62,7 +103,7 @@ namespace StudentMgtV2
                 var st = _repo.FindAStudentByID(res);
                 if (st != null)
                 {
-                    RefreshStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
+                    ViewAStudentInfo(st.Id, st.Name, st.Address, st.Yob.ToString(), st.Gpa.ToString());
                     RefreshGrid(_repo.GetAll());
                     //dgvStudentsList.Refresh(); no work
                 }
@@ -70,6 +111,11 @@ namespace StudentMgtV2
         }
 
 
+        private void MoveCursorOutOfItem(Point itemLocation)
+        {
+            int X = Location.X + itemLocation.X; int Y = Location.Y + itemLocation.Y;
+            Cursor.Position = new Point(X, Y);
+        }
         private void MoveCursorToFormCenter()
         {
             // Calculate the center of the form
@@ -80,99 +126,26 @@ namespace StudentMgtV2
             Cursor.Position = new Point(centerX, centerY);
         }
 
-        private void PreventMultipleClickOnButton()
+        private void PreventMultipleClickOnButton(Point itemLocation)
         {
-            MoveCursorToFormCenter();
+            //MoveCursorToFormCenter();
+            MoveCursorOutOfItem(itemLocation);
         }
 
 
 
 
-        private bool runningExclusiveProcess = false;
-        private void AddStudent01(object sender, EventArgs e)
+
+        private void RefreshGrid(List<Student> _list)
         {
-            if (!runningExclusiveProcess)
-            {
-                runningExclusiveProcess = true;
-                btnAdd.Enabled = false;
-
-                if (!ValidateInputData()) return;
-
-                string res = _repo.Add(txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
-                if (string.IsNullOrEmpty(res))
-                {
-                    txtMsg.Text = "Failed to add student.";
-                }
-                else
-                {
-                    txtMsg.Text = $"Student id = {res} added successfully.";
-                    var st = _repo.FindAStudentByID(res);
-                    if (st != null)
-                    {
-                        RefreshStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
-                        RefreshGrid(_repo.GetAll());
-                        //dgvStudentsList.Refresh(); no work
-                    }
-                }
-
-
-
-                // If your task is synchronous, then undo your flag here:
-                runningExclusiveProcess = false;
-                btnAdd.Enabled = true;
-            }
-        }
-
-
-        private void AddStudent00(object sender, EventArgs e)
-        {
-            btnAdd.Enabled = false;
-            //btnAdd.Click -= AddStudent;
-            try
-            {
-                if (!ValidateInputData()) return;
-
-                string res = _repo.Add(txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
-                if (string.IsNullOrEmpty(res))
-                {
-                    txtMsg.Text = "Failed to add student.";
-                }
-                else
-                {
-                    txtMsg.Text = $"Student id = {res} added successfully.";
-                    var st = _repo.FindAStudentByID(res);
-                    if (st != null)
-                    {
-                        RefreshStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
-                        RefreshGrid();
-                        //dgvStudentsList.Refresh(); no work
-                    }
-                }
-                // Simulate a delay (replace this with your actual operation)
-                //System.Threading.Thread.Sleep(2000);
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show("An error occurred: " + ex.Message);
-                txtMsg.Text = ex.Message;
-            }
-            finally
-            {
-                btnAdd.Enabled = true;
-                btnAdd.Click += AddStudent;
-            }
-
-        }
-
-        private void RefreshGrid(List<Student>? _list)
-        {
+            if (_list == null) return;
             dgvStudentsList.DataSource = null;
             dgvStudentsList.DataSource = _list;
         }
 
-        private void RefreshStudentInfo(string? id, string? name, string? address, int yob, double gpa)
+        private void ViewAStudentInfo(string? id, string? name, string? address, string? yob, string? gpa)
         {
-            txtID.Text = id; txtName.Text = name; txtAddress.Text = address; txtYob.Text = yob.ToString(); txtGpa.Text = gpa.ToString();
+            txtID.Text = id; txtName.Text = name; txtAddress.Text = address; txtYob.Text = yob; txtGpa.Text = gpa;
         }
 
         private void ClearStudentInfo()
@@ -185,34 +158,21 @@ namespace StudentMgtV2
             if (dgvStudentsList.SelectedRows.Count > 0)
             {
                 DataGridViewRow row = dgvStudentsList.SelectedRows[0];
-                // Parse YOB (Year of Birth) and GPA to int and double respectively
-                int yob;
-                double gpa;
+                // Call RefreshStudentInfo with the parsed values
+                ViewAStudentInfo(
+                    row.Cells[0].Value.ToString(),
+                    row.Cells["Name"].Value.ToString(),
+                    row.Cells["Address"].Value.ToString(),
+                    row.Cells[3].Value.ToString(),
+                    row.Cells[4].Value.ToString()
+                );
 
-                if (int.TryParse(row.Cells[3].Value.ToString(), out yob) &&
-                    double.TryParse(row.Cells[4].Value.ToString(), out gpa))
-                {
-                    // Call RefreshStudentInfo with the parsed values
-                    RefreshStudentInfo(
-                        row.Cells[0].Value.ToString(),
-                        row.Cells["Name"].Value.ToString(),
-                        row.Cells["Address"].Value.ToString(),
-                        yob,
-                        gpa
-                    );
-                }
-                else
-                {
-                    // Handle parsing failure if needed
-                    //MessageBox.Show("Failed to parse Year of Birth (YOB) or GPA.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    txtMsg.Text = "Failed to parse Year of Birth (YOB) or GPA.";
-                }
             }
         }
 
         private void UpdateStudent(object sender, EventArgs e)
         {
-            PreventMultipleClickOnButton();
+            PreventMultipleClickOnButton(btnUpdate.Location);
 
             if (!ValidateInputData()) return;
 
@@ -231,7 +191,9 @@ namespace StudentMgtV2
 
         private void DeleteStudent(object sender, EventArgs e)
         {
-            PreventMultipleClickOnButton();
+            PreventMultipleClickOnButton(btnDelete.Location);
+            // Get the index of the selected row
+            int selectedIndex = dgvStudentsList.SelectedRows[0].Index;
 
             if (_repo.Delete(txtID.Text))
             {
@@ -239,6 +201,20 @@ namespace StudentMgtV2
                 //dgvStudentsList.Refresh();  // worked //
                 RefreshGrid(_repo.GetAll());
                 ClearStudentInfo();
+                // Determine the index of the next row to select
+                int nextIndex = selectedIndex;
+                // If the nextIndex is out of bounds, select the last row
+                if (nextIndex >= dgvStudentsList.Rows.Count)
+                {
+                    nextIndex = dgvStudentsList.Rows.Count - 1;
+                }
+                // Select the next row programmatically
+                if (nextIndex >= 0)
+                {
+                    dgvStudentsList.Rows[nextIndex].Selected = true;
+                    // Set the index of the first row to be displayed
+                    dgvStudentsList.FirstDisplayedScrollingRowIndex = nextIndex;
+                }
             }
             else
             {
@@ -248,8 +224,17 @@ namespace StudentMgtV2
 
         private void SearchStudents(object sender, EventArgs e)
         {
-            PreventMultipleClickOnButton();
-            var result = _repo.FindStudents("Chich", 1800, 4.0);
+            PreventMultipleClickOnButton(groupBox1.Location);
+
+
+            var result = _repo.SearchStudents(
+                 id:        s[0].Equals("null") ? null : s[0],
+                 name:      s[1].Equals("null") ? null : s[1],
+                 address:   s[2].Equals("null") ? null : s[2],
+                 yob:       s[3].Equals("null") ? null : int.Parse(s[3]),
+                 gpa:       s[4].Equals("null") ? null : double.Parse(s[4]),
+                 logicOperator: op
+                 );
             dgvSearchResult.DataSource = result;
         }
 
@@ -261,9 +246,160 @@ namespace StudentMgtV2
                 // Get the column name
                 string columnName = dgvStudentsList.Columns[e.ColumnIndex].Name;
 
+                // Set the back color of the cell
+                // dgvStudentsList.ColumnHeadersDefaultCellStyle.BackColor = Color.Aqua;
+                dgvStudentsList.Columns[e.ColumnIndex].DefaultCellStyle.BackColor = Color.Azure;
+
                 // Now you have the column name, you can perform sorting or any other operations
                 RefreshGrid(_repo.SortingByColName(columnName));
             }
         }
+
+        // txtSearch get Focus
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            // 
+            //var ss = txtSearch.PlaceholderText.Split(';');
+            //txtMsg.Text = $"{ss[0]}; Example: {ss[1]}";
+
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private string[] s;
+        private string op;
+        private string inputFormat;
+        private string BuildSearchQuery()
+        {
+            s = new string[5]; for (int i = 0; i < s.Length; i++) s[i] = "null";
+            op = rbAND.Checked ? "AND" : " OR";
+
+            if (ckbID.Checked) s[0] = "id";
+            if (ckbName.Checked) s[1] = "name";
+            if (ckbAddress.Checked) s[2] = "address";
+            if (ckbYob.Checked) s[3] = "yob";
+            if (ckbGpa.Checked) s[4] = "gpa";
+            string defaultS = "";
+            if (s.Where(x => x != "null").Count() <= 0)
+            {
+                s[1] = "name";
+                defaultS = "Your default query is name. ";
+            }
+            inputFormat = string.Join(",", s.Where(x => x != "null"));
+            return $"{defaultS}Please input: {inputFormat}\t(Query: {string.Join(",", s)},{op})";
+        }
+
+        private void ckbName_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private void ckbID_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private void ckbAddress_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private void ckbYob_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private void ckbGpa_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private void rbAND_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
+
+        private void rbOR_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMsg.Text = BuildSearchQuery();
+        }
     }
 }
+
+
+
+//not work
+//private bool runningExclusiveProcess = false;
+//private void AddStudent01(object sender, EventArgs e)
+//{
+//    if (!runningExclusiveProcess)
+//    {
+//        runningExclusiveProcess = true;
+//        btnAdd.Enabled = false;
+
+//        if (!ValidateInputData()) return;
+
+//        string res = _repo.Add(txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
+//        if (string.IsNullOrEmpty(res))
+//        {
+//            txtMsg.Text = "Failed to add student.";
+//        }
+//        else
+//        {
+//            txtMsg.Text = $"Student id = {res} added successfully.";
+//            var st = _repo.FindAStudentByID(res);
+//            if (st != null)
+//            {
+//                ViewAStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
+//                RefreshGrid(_repo.GetAll());
+//                //dgvStudentsList.Refresh(); no work
+//            }
+//        }
+
+
+
+//        // If your task is synchronous, then undo your flag here:
+//        runningExclusiveProcess = false;
+//        btnAdd.Enabled = true;
+//    }
+//}
+
+//// Not work
+//private void AddStudent00(object sender, EventArgs e)
+//{
+//    btnAdd.Enabled = false;
+//    //btnAdd.Click -= AddStudent;
+//    try
+//    {
+//        if (!ValidateInputData()) return;
+
+//        string res = _repo.Add(txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
+//        if (string.IsNullOrEmpty(res))
+//        {
+//            txtMsg.Text = "Failed to add student.";
+//        }
+//        else
+//        {
+//            txtMsg.Text = $"Student id = {res} added successfully.";
+//            var st = _repo.FindAStudentByID(res);
+//            if (st != null)
+//            {
+//                ViewAStudentInfo(st.Id, st.Name, st.Address, st.Yob, st.Gpa);
+//                RefreshGrid(_repo.GetAll());
+//                //dgvStudentsList.Refresh(); no work
+//            }
+//        }
+//        // Simulate a delay (replace this with your actual operation)
+//        //System.Threading.Thread.Sleep(2000);
+//    }
+//    catch (Exception ex)
+//    {
+//        //MessageBox.Show("An error occurred: " + ex.Message);
+//        txtMsg.Text = ex.Message;
+//    }
+//    finally
+//    {
+//        btnAdd.Enabled = true;
+//        btnAdd.Click += AddStudent;
+//    }
+
+//}

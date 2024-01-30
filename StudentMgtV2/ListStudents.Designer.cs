@@ -41,12 +41,14 @@
             txtGpa = new TextBox();
             txtSearch = new TextBox();
             groupBox1 = new GroupBox();
+            rbOR = new RadioButton();
+            rbAND = new RadioButton();
             ckbGpa = new CheckBox();
             ckbYob = new CheckBox();
             ckbAddress = new CheckBox();
             ckbName = new CheckBox();
             ckbID = new CheckBox();
-            button4 = new Button();
+            btnSearch = new Button();
             btnAdd = new Button();
             btnUpdate = new Button();
             btnDelete = new Button();
@@ -82,6 +84,7 @@
             // 
             txtID.Location = new Point(95, 66);
             txtID.Name = "txtID";
+            txtID.PlaceholderText = "SA123456";
             txtID.ReadOnly = true;
             txtID.Size = new Size(120, 23);
             txtID.TabIndex = 0;
@@ -130,6 +133,7 @@
             // txtYob
             // 
             txtYob.Location = new Point(95, 153);
+            txtYob.MaxLength = 4;
             txtYob.Name = "txtYob";
             txtYob.Size = new Size(120, 23);
             txtYob.TabIndex = 3;
@@ -154,25 +158,51 @@
             // 
             txtSearch.Location = new Point(72, 20);
             txtSearch.Name = "txtSearch";
-            txtSearch.PlaceholderText = "ID,Name,Address,Yob,Gpa";
-            txtSearch.Size = new Size(166, 23);
+            txtSearch.Size = new Size(216, 23);
             txtSearch.TabIndex = 0;
+            txtSearch.Enter += txtSearch_Enter;
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(rbOR);
+            groupBox1.Controls.Add(rbAND);
             groupBox1.Controls.Add(ckbGpa);
             groupBox1.Controls.Add(ckbYob);
             groupBox1.Controls.Add(ckbAddress);
             groupBox1.Controls.Add(ckbName);
             groupBox1.Controls.Add(ckbID);
-            groupBox1.Controls.Add(button4);
+            groupBox1.Controls.Add(btnSearch);
             groupBox1.Controls.Add(txtSearch);
             groupBox1.Location = new Point(12, 266);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(297, 83);
+            groupBox1.Size = new Size(297, 106);
             groupBox1.TabIndex = 9;
             groupBox1.TabStop = false;
             groupBox1.Text = "Search";
+            // 
+            // rbOR
+            // 
+            rbOR.AutoSize = true;
+            rbOR.Location = new Point(115, 81);
+            rbOR.Name = "rbOR";
+            rbOR.Size = new Size(41, 19);
+            rbOR.TabIndex = 3;
+            rbOR.TabStop = true;
+            rbOR.Text = "OR";
+            rbOR.UseVisualStyleBackColor = true;
+            rbOR.CheckedChanged += rbOR_CheckedChanged;
+            // 
+            // rbAND
+            // 
+            rbAND.AutoSize = true;
+            rbAND.Location = new Point(59, 81);
+            rbAND.Name = "rbAND";
+            rbAND.Size = new Size(50, 19);
+            rbAND.TabIndex = 3;
+            rbAND.TabStop = true;
+            rbAND.Text = "AND";
+            rbAND.UseVisualStyleBackColor = true;
+            rbAND.CheckedChanged += rbAND_CheckedChanged;
             // 
             // ckbGpa
             // 
@@ -183,6 +213,7 @@
             ckbGpa.TabIndex = 2;
             ckbGpa.Text = "Gpa";
             ckbGpa.UseVisualStyleBackColor = true;
+            ckbGpa.CheckedChanged += ckbGpa_CheckedChanged;
             // 
             // ckbYob
             // 
@@ -193,6 +224,7 @@
             ckbYob.TabIndex = 2;
             ckbYob.Text = "Yob";
             ckbYob.UseVisualStyleBackColor = true;
+            ckbYob.CheckedChanged += ckbYob_CheckedChanged;
             // 
             // ckbAddress
             // 
@@ -203,6 +235,7 @@
             ckbAddress.TabIndex = 2;
             ckbAddress.Text = "Address";
             ckbAddress.UseVisualStyleBackColor = true;
+            ckbAddress.CheckedChanged += ckbAddress_CheckedChanged;
             // 
             // ckbName
             // 
@@ -213,6 +246,7 @@
             ckbName.TabIndex = 2;
             ckbName.Text = "Name";
             ckbName.UseVisualStyleBackColor = true;
+            ckbName.CheckedChanged += ckbName_CheckedChanged;
             // 
             // ckbID
             // 
@@ -223,16 +257,18 @@
             ckbID.TabIndex = 2;
             ckbID.Text = "ID";
             ckbID.UseVisualStyleBackColor = true;
+            ckbID.CheckedChanged += ckbID_CheckedChanged;
             // 
-            // button4
+            // btnSearch
             // 
-            button4.Location = new Point(6, 18);
-            button4.Name = "button4";
-            button4.Size = new Size(60, 26);
-            button4.TabIndex = 1;
-            button4.Text = "Search";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += SearchStudents;
+            btnSearch.BackColor = SystemColors.HotTrack;
+            btnSearch.Location = new Point(6, 18);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(60, 26);
+            btnSearch.TabIndex = 1;
+            btnSearch.Text = "Search";
+            btnSearch.UseVisualStyleBackColor = false;
+            btnSearch.Click += SearchStudents;
             // 
             // btnAdd
             // 
@@ -256,12 +292,13 @@
             // 
             // btnDelete
             // 
+            btnDelete.BackColor = Color.Tomato;
             btnDelete.Location = new Point(159, 222);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(60, 26);
             btnDelete.TabIndex = 7;
             btnDelete.Text = "Delete";
-            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += DeleteStudent;
             // 
             // dgvStudentsList
@@ -346,7 +383,7 @@
         private TextBox txtGpa;
         private TextBox txtSearch;
         private GroupBox groupBox1;
-        private Button button4;
+        private Button btnSearch;
         private Button btnAdd;
         private Button btnUpdate;
         private Button btnDelete;
@@ -358,5 +395,7 @@
         private CheckBox ckbAddress;
         private CheckBox ckbName;
         private CheckBox ckbID;
+        private RadioButton rbOR;
+        private RadioButton rbAND;
     }
 }
