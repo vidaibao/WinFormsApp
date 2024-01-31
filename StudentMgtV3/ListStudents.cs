@@ -7,8 +7,9 @@ namespace StudentMgtV3
     public partial class frmStudentsList : Form
     {
 
-        private StudentRepositoryCSV _repo; // not new() here b/c ...
+        //private StudentRepositoryCSV _repo; // not new() here b/c ...
         //ValidateInputData userInput;// = new ValidateInputData();
+        private IRepository<Student> _repo; // depends on someone has 4 functions NOT an explicitly object
 
 
         public frmStudentsList()
@@ -18,7 +19,7 @@ namespace StudentMgtV3
 
         private void frmStudentsList_Load(object sender, EventArgs e)
         {
-            _repo = new StudentRepositoryCSV();
+            _repo = new StudentRepositorySqlServer();
             var students = _repo.GetAll();
             dgvStudentsList.DataSource = students;
 

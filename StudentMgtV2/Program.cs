@@ -1,4 +1,4 @@
-namespace StudentMgtV2
+namespace StudentMgtV3
 {
     internal static class Program
     {
