@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace StudentMgtV2
 {
     internal class ValidateInputData
@@ -25,19 +27,19 @@ namespace StudentMgtV2
         /// <returns></returns>
         public bool ValidateStringName(string s)
         {
-            if ( string.IsNullOrEmpty(s) || s.Length > 20 ) return false;
+            if ( string.IsNullOrEmpty(s) || s.Length > CONST.NAME_MAX_LENGTH ) return false;
             return true;
         }
         public bool ValidateStringAddress(string s)
         {
-            if (string.IsNullOrEmpty(s) || s.Length > 50) return false;
+            if (string.IsNullOrEmpty(s) || s.Length > CONST.ADDRESS_MAX_LENGTH) return false;
             return true;
         }
         public bool ValidateIntYob(string s)
         {
             if (int.TryParse(s, out int yob))
             {
-                if (yob >= 1980 && yob <= 2020) return true;
+                if (yob >= CONST.YOB_MIN && yob <= CONST.YOB_MAX) return true;
             }
             return false;
         }
@@ -45,7 +47,7 @@ namespace StudentMgtV2
         {
             if (double.TryParse(s.Trim(), out double gpa))
             {
-                if (gpa >= 5.0 && gpa <= 10.0) { return true; }
+                if (gpa >= CONST.GPA_MIN && gpa <= CONST.GPA_MAX) { return true; }
             }
             return false;
         }
@@ -54,25 +56,35 @@ namespace StudentMgtV2
         public string ValidateStringSearch(string s, string inputFormat)
         {
             if (string.IsNullOrEmpty(s)) return "UserInputIsNullOrEmpty";
-            if (s.Split(',').Length != inputFormat.Split(',').Length) return "Not matching with input format.";
+            if (s.Split(',').Length != inputFormat.Split(',').Length) 
+                return "UserInput NOT matching with input format.";
             var input = s.ToLower().Split(',');
             var format = inputFormat.ToLower().Split(",");
             for (int i = 0; i < input.Length; i++)
             {
-                if (format[i].Equals("id") || format[i].Equals("name") || format[i].Equals("address"))
+                string ca = format[i];
+                switch (ca)
                 {
-                    //
-                }
-                else if (format[i].Equals("yob"))
-                {
-                    if (!ValidateIntYob(input[i]))
-                    {
-                        return "Yob must be positive integer and between 1980 to 2020.";
-                    }
-                }
-                else if (format[i].Equals("gpa"))
-                {
-                    if (!ValidateDoubleGpa(input[i])) return "Yob must be double number and between 5.0 to 10.0";
+                    case "id":
+                        if (string.IsNullOrEmpty(input[i]) || input[i].Length > CONST.ID_MAX_LENGTH) 
+                            return $"ID not NULL and format {CONST.ID_FORMAT}";
+                        break;
+                    case "name":
+                        if (string.IsNullOrEmpty(input[i]) || input[i].Length > CONST.NAME_MAX_LENGTH)
+                            return $"Name not NULL and max length is {CONST.NAME_MAX_LENGTH}";
+                        break;
+                    case "address":
+                        if (string.IsNullOrEmpty(input[i]) || input[i].Length > CONST.ADDRESS_MAX_LENGTH)
+                            return $"Address not NULL and max length is {CONST.ADDRESS_MAX_LENGTH}";
+                        break;
+                    case "yob":
+                        if (!ValidateIntYob(input[i])) 
+                            return $"Yob must be positive integer and between {CONST.YOB_MIN} to {CONST.YOB_MAX}.";
+                        break;
+                    case "gpa":
+                        if (!ValidateDoubleGpa(input[i])) 
+                            return $"Gpa must be double number and between {CONST.GPA_MIN} to {CONST.GPA_MAX}";
+                        break;
                 }
             }
             return "yes";

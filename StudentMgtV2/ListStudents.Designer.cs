@@ -320,7 +320,7 @@
             dgvSearchResult.Location = new Point(330, 266);
             dgvSearchResult.Name = "dgvSearchResult";
             dgvSearchResult.RowTemplate.Height = 25;
-            dgvSearchResult.Size = new Size(407, 65);
+            dgvSearchResult.Size = new Size(407, 106);
             dgvSearchResult.TabIndex = 10;
             // 
             // txtMsg

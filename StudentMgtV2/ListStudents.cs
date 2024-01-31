@@ -8,6 +8,7 @@ namespace StudentMgtV2
     {
 
         private StudentRepositorySqlserver _repo; // not new() here b/c ...
+        //ValidateInputData userInput;// = new ValidateInputData();
 
 
         public frmStudentsList()
@@ -51,9 +52,10 @@ namespace StudentMgtV2
             dgvStudentsList.Columns[1].HeaderCell.Style.BackColor = Color.Yellow;
         }
 
+
         private bool ValidateInputData()
         {
-            ValidateInputData userInput = new ValidateInputData();
+            var userInput = new ValidateInputData();
             // ID is read-only and unique, auto generate
             txtName.Text = txtName.Text.Trim();
             if (!userInput.ValidateStringName(txtName.Text))
@@ -222,17 +224,30 @@ namespace StudentMgtV2
             }
         }
 
+
+
+        private string[] s; // input fields depends on input format
+        private string op;  // AND OR
+        private string inputFormat;
+
         private void SearchStudents(object sender, EventArgs e)
         {
             PreventMultipleClickOnButton(groupBox1.Location);
 
-
+            var userInput = new ValidateInputData();
+            string res = userInput.ValidateStringSearch(txtSearch.Text, inputFormat);
+            if (res != "yes") { txtMsg.Text = res; return; }
+            // search key ????
+            var key = new Queue<string>();
+            var inputS = txtSearch.Text.Split(',');
+            foreach (var s in inputS) key.Enqueue(s);
+            // 
             var result = _repo.SearchStudents(
-                 id:        s[0].Equals("null") ? null : s[0],
-                 name:      s[1].Equals("null") ? null : s[1],
-                 address:   s[2].Equals("null") ? null : s[2],
-                 yob:       s[3].Equals("null") ? null : int.Parse(s[3]),
-                 gpa:       s[4].Equals("null") ? null : double.Parse(s[4]),
+                 id: s[0].Equals("null") ? null : key.Dequeue(),
+                 name: s[1].Equals("null") ? null : key.Dequeue(),
+                 address: s[2].Equals("null") ? null : key.Dequeue(),
+                 yob: s[3].Equals("null") ? null : int.Parse(key.Dequeue()),
+                 gpa: s[4].Equals("null") ? null : double.Parse(key.Dequeue()),
                  logicOperator: op
                  );
             dgvSearchResult.DataSource = result;
@@ -265,19 +280,20 @@ namespace StudentMgtV2
             txtMsg.Text = BuildSearchQuery();
         }
 
-        private string[] s;
-        private string op;
-        private string inputFormat;
+
         private string BuildSearchQuery()
         {
-            s = new string[5]; for (int i = 0; i < s.Length; i++) s[i] = "null";
+            s = new string[CONST.STUDENT_FIELDS];
+            for (int i = 0; i < s.Length; i++) s[i] = "null";
+            var examples = new string[CONST.STUDENT_FIELDS];
+
             op = rbAND.Checked ? "AND" : " OR";
 
-            if (ckbID.Checked) s[0] = "id";
-            if (ckbName.Checked) s[1] = "name";
-            if (ckbAddress.Checked) s[2] = "address";
-            if (ckbYob.Checked) s[3] = "yob";
-            if (ckbGpa.Checked) s[4] = "gpa";
+            if (ckbID.Checked) { s[0] = "id"; examples[0] = CONST.STUDENT_KEY_EXAMPLE[0]; }
+            if (ckbName.Checked) { s[1] = "name"; examples[1] = CONST.STUDENT_KEY_EXAMPLE[1]; }
+            if (ckbAddress.Checked) { s[2] = "address"; examples[2] = CONST.STUDENT_KEY_EXAMPLE[2]; }
+            if (ckbYob.Checked) { s[3] = "yob"; examples[3] = CONST.STUDENT_KEY_EXAMPLE[3]; }
+            if (ckbGpa.Checked) { s[4] = "gpa"; examples[4] = CONST.STUDENT_KEY_EXAMPLE[4]; }
             string defaultS = "";
             if (s.Where(x => x != "null").Count() <= 0)
             {
@@ -285,7 +301,7 @@ namespace StudentMgtV2
                 defaultS = "Your default query is name. ";
             }
             inputFormat = string.Join(",", s.Where(x => x != "null"));
-            return $"{defaultS}Please input: {inputFormat}\t(Query: {string.Join(",", s)},{op})";
+            return $"{defaultS}Please input: {inputFormat}\t(Ex: {string.Join(",", examples.Where(x => x != null))})\tOperator: {op}";
         }
 
         private void ckbName_CheckedChanged(object sender, EventArgs e)
