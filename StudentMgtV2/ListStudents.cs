@@ -195,7 +195,7 @@ namespace StudentMgtV3
 
         private void DeleteStudent(object sender, EventArgs e)
         {
-            PreventMultipleClickOnButton(btnDelete.Location);
+            PreventMultipleClickOnButton(btnDelete.Location);//
             // Get the index of the selected row
             int selectedIndex = dgvStudentsList.SelectedRows[0].Index;
 

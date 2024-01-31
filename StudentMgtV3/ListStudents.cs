@@ -97,15 +97,15 @@ namespace StudentMgtV3
 
             if (!ValidateInputData()) return;
 
-            string res = _repo.Add(txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
-            if (string.IsNullOrEmpty(res))
+            var x = new Student(txtID.Text, txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
+            if (_repo.Add(x))
             {
                 txtMsg.Text = "Failed to add student.";
             }
             else
             {
-                txtMsg.Text = $"Student id = {res} added successfully.";
-                var st = _repo.FindAStudentByID(res);
+                txtMsg.Text = $"Student id = {txtID.Text} added successfully.";
+                var st = _repo.GetById(txtID.Text);
                 if (st != null)
                 {
                     ViewAStudentInfo(st.Id, st.Name, st.Address, st.Yob.ToString(), st.Gpa.ToString());
@@ -141,7 +141,7 @@ namespace StudentMgtV3
 
 
 
-        private void RefreshGrid(List<Student> _list)
+        private void RefreshGrid(List<Student>? _list)
         {
             if (_list == null) return;
             dgvStudentsList.DataSource = null;
@@ -181,8 +181,8 @@ namespace StudentMgtV3
 
             if (!ValidateInputData()) return;
 
-            if (_repo.Update(txtID.Text, txtName.Text, txtAddress.Text
-                , int.Parse(txtYob.Text), double.Parse(txtGpa.Text)))
+            var x = new Student(txtID.Text, txtName.Text, txtAddress.Text, int.Parse(txtYob.Text), double.Parse(txtGpa.Text));
+            if (_repo.Update(x))
             {
                 txtMsg.Text = $"Student ID = {txtID.Text} updated successfully.";
                 dgvStudentsList.Refresh();  // worked
@@ -198,7 +198,7 @@ namespace StudentMgtV3
         {
             PreventMultipleClickOnButton(btnDelete.Location);
             // Get the index of the selected row
-            int selectedIndex = dgvStudentsList.SelectedRows[0].Index;
+            int selectedIndex = dgvStudentsList.SelectedRows[0].Index;  // ??????
 
             if (_repo.Delete(txtID.Text))
             {
@@ -245,7 +245,7 @@ namespace StudentMgtV3
             var inputS = txtSearch.Text.Split(',');
             foreach (var s in inputS) key.Enqueue(s);
             // 
-            var result = _repo.SearchStudents(
+            var result = _repo.Search(
                  id: s[0].Equals("null") ? null : key.Dequeue(),
                  name: s[1].Equals("null") ? null : key.Dequeue(),
                  address: s[2].Equals("null") ? null : key.Dequeue(),

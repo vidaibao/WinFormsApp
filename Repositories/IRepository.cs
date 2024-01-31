@@ -22,6 +22,8 @@ namespace Repositories
         public bool Delete(string id);
         public T? GetById(string id);
         public List<T>? Search(string keyword);
-
+        //-------------------------------------------------------------------------------------------------
+        List<T>? Search(string? id, string? name, string? address, int? yob, double? gpa, string logicOperator);
+        List<Student>? SortingByColName(string columnName);
     }
 }
